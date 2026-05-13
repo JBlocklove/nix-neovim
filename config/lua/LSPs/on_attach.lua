@@ -15,12 +15,10 @@ return function(_, bufnr)
 
 	nmap('<Space>gd', vim.lsp.buf.definition, '[G]oto [D]efinition')
 
-    if nixInfo(false, "settings", "cats", "telescope") then
-		nmap('<Space>gr', function() require('telescope.builtin').lsp_references() end, '[G]oto [R]eferences')
-		nmap('<Space>gI', function() require('telescope.builtin').lsp_implementations() end, '[G]oto [I]mplementation')
-		nmap('<Space>ds', function() require('telescope.builtin').lsp_document_symbols() end, '[D]ocument [S]ymbols')
-		nmap('<Space>ws', function() require('telescope.builtin').lsp_dynamic_workspace_symbols() end, '[W]orkspace [S]ymbols')
-	end 
+	nmap('<Space>gr', function() Snacks.picker.lsp_references() end, '[G]oto [R]eferences')
+	nmap('<Space>gI', function() Snacks.picker.lsp_implementations() end, '[G]oto [I]mplementation')
+	nmap('<Space>ds', function() Snacks.picker.lsp_symbols() end, '[D]ocument [S]ymbols')
+	nmap('<Space>ws', function() Snacks.picker.lsp_workspace_symbols() end, '[W]orkspace [S]ymbols')
 
 	nmap('<Space>D', vim.lsp.buf.type_definition, 'Type [D]efinition')
 

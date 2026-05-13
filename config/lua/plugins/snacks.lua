@@ -50,9 +50,9 @@ return{
             },
 
             -- Notifications
-            notifier = {},
-            dim = {},
-            scope = {},
+            notifier = {
+                enable = true,
+            },
         })
 
         -- NOTE: we aren't loading this lazily, and the keybinds already are so it is fine to just set these here
@@ -88,7 +88,7 @@ return{
         vim.keymap.set("n", "<leader>fm", function() Snacks.picker.keymaps() end, { desc = "[F]ind Key[m]aps" })
         vim.keymap.set("n", "<leader>fq", function() Snacks.picker.qflist() end, { desc = "[F]ind in [Q]uickfix" })
         vim.keymap.set("n", "<leader>fs", function() Snacks.picker.spelling() end, { desc = "[F]ind [S]pelling" })
-        vim.keymap.set('n', "<leader>su", function() Snacks.picker.undo() end, { desc = "[F]ind [U]ndo History" })
+        vim.keymap.set('n', "<leader>fu", function() Snacks.picker.undo() end, { desc = "[F]ind [U]ndo History" })
 
 
 
@@ -101,6 +101,8 @@ return{
         -- vim.keymap.set('n', "<leader>sM", function() Snacks.picker.man() end, { desc = "Man Pages" })
         -- vim.keymap.set('n', "<leader>sq", function() Snacks.picker.qflist() end, { desc = "Quickfix List" })
         -- vim.keymap.set('n', "<leader>sR", function() Snacks.picker.resume() end, { desc = "Resume" })
+        --
+        vim.keymap.set('n', "<leader>q", function() Snacks.toggle.dim() end, { desc = "Snacks Toggle Dim" })
 	end,
 }
 

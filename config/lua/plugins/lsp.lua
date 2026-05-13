@@ -1,7 +1,0 @@
-local lsp = require("lspconfig")
-lsp.nixd.setup({})
-lsp.pyright.setup({})
-lsp.bashls.setup({})
-lsp.texlab.setup({})
-lsp.svlangserver.setup({})
-lsp.vhdl_ls.setup({})

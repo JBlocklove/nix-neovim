@@ -87,6 +87,35 @@ inputs: { config, wlib, lib, pkgs, ... }: {
         ];
     };
 
+    config.specs.verilog = {
+        after = [ "lsp" ];
+        lazy = false;
+        data = null;
+        extraPackages = with pkgs; [
+            verible
+            sv-lang
+            verilator
+        ];
+    };
+
+    config.specs.vhdl = {
+        after = [ "lsp" ];
+        lazy = false;
+        data = null;
+        extraPackages = with pkgs; [
+            vhdl-ls
+        ];
+    };
+
+    config.specs.bash = {
+        after = [ "lsp" ];
+        lazy = false;
+        data = null;
+        extraPackages = with pkgs; [
+            bash-language-server
+        ];
+    };
+
     config.specs.markdown = {
         after = [ "general" ];
         lazy = true;
@@ -113,7 +142,7 @@ inputs: { config, wlib, lib, pkgs, ... }: {
         lazy = true;
         extraPackages = with pkgs; [
 			ripgrep
-            # tree-sitter
+            tree-sitter
         ];
         data = with pkgs.vimPlugins; [
             snacks-nvim

@@ -88,13 +88,12 @@ nixInfo.lze.load {
 
     -- Navigation
 	{ import = "plugins.tmux" },
-	-- { import = "plugins.eyeliner" }, -- FIXME: Install issue? Also kinda broken in general, see if there's a replacement
 
     -- Snacks
     -- - Picker (telescope replacement)
     -- - Indent
     -- - Notifier
-    { import = "plugins.snacks" }, -- FIXME: Dim not working, change indent line color to green
+    { import = "plugins.snacks" },
 
 	{ import = "plugins.treesitter" },
 	{ import = "plugins.autopair" },
