@@ -22,8 +22,6 @@ return function(_, bufnr)
 
 	nmap('<Space>D', vim.lsp.buf.type_definition, 'Type [D]efinition')
 
-	-- See `:help K` for why this keymap
-	nmap('<Space>k', function() vim.lsp.buf.hover { border = "single" } end, 'Hover Documentation')
 	nmap('<Space>j', vim.diagnostic.open_float, 'Show Line Diagnostics')
 	nmap('<Space>sd', vim.lsp.buf.signature_help, 'Signature Documentation')
 
@@ -41,11 +39,11 @@ return function(_, bufnr)
 	end, { desc = 'Format current buffer with LSP' })
 
     -- FIXME: Force diagnostic initialization on attach (needed for lua maybe)
-    vim.schedule(function()
-        if vim.api.nvim_buf_is_valid(bufnr) then
-            vim.diagnostic.enable(true, { bufnr = bufnr })
-        end
-    end)
+    -- vim.schedule(function()
+    --     if vim.api.nvim_buf_is_valid(bufnr) then
+    --         vim.diagnostic.enable(true, { bufnr = bufnr })
+    --     end
+    -- end)
 
 end
 

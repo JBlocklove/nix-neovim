@@ -57,6 +57,9 @@ return{
 
         -- NOTE: we aren't loading this lazily, and the keybinds already are so it is fine to just set these here
 
+        -- Notification history
+        vim.keymap.set("n", "<leader>nh", function() Snacks.notifier.show_history() end, { desc = "[N]otification [H]istory" })
+
         -- Files
         vim.keymap.set("n", "<leader>-", function() Snacks.picker.files() end, { desc = '[-] Find Files' })
         vim.keymap.set("n", "<leader>fh", function() Snacks.picker.files({ cwd = "~/" }) end, { desc = '[F]ind Files in [Home]' })

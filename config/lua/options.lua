@@ -23,7 +23,7 @@ vim.opt.smartindent = true -- make indenting smarter again
 vim.opt.smarttab = true
 vim.opt.autoindent = true
 vim.opt.breakindent = true
-vim.opt.expandtab = true -- convert tabs to spaces
+vim.opt.expandtab = false 
 vim.opt.cpoptions:append('I')
 vim.opt.tabstop = 4 -- insert 4 spaces for a tab
 vim.opt.softtabstop = 4 -- insert 4 spaces for a tab
@@ -63,3 +63,5 @@ vim.o.exrc = false -- can be toggled off in that file to stop it from searching 
 
 vim.opt.shortmess:append "c"
 -- vim.g.python3_host_prog = '/usr/bin/python3'
+
+vim.o.winborder = "single"

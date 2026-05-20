@@ -64,7 +64,9 @@ nixInfo.lze.load {
                     formatters = {
                         ignoreComments = true,
                     },
-                    signatureHelp = { enabled = true },
+                    signatureHelp = {
+                        enabled = true
+                    },
                     diagnostics = {
                         globals = { "nixInfo", "vim", },
                         disable = { 'missing-fields' },
@@ -235,4 +237,9 @@ vim.api.nvim_create_autocmd('LspAttach', {
         require("LSPs.on_attach")(nil, event.buf)
     end,
 })
+
+-- Override hover mapping to add border
+vim.keymap.set("n", "K", function() vim.lsp.buf.hover { border = "single" } end, { desc = "Hover Documentation" })
+-- Override signature help mapping to add border
+vim.keymap.set({ "n", "i" }, "<C-k>", function() vim.lsp.buf.signature_help({border = "single"}) end, { desc = "Signature Help"})
 

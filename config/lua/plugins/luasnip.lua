@@ -19,6 +19,12 @@ return {
 					luasnip.change_choice(1)
 				end
 			end)
+
+			-- vim.keymap.set({ "i", "s" }, "<C-f>", function()
+			-- 	if luasnip.choice_active() then
+			-- 		luasnip.change_choice(1)
+			-- 	end
+			-- end)
 		end,
 	},
 }
