@@ -31,7 +31,7 @@ return {
                 }
             })
             -- Necessary to keep concealcursor = ""
-            vim.api.nvim_create_autocmd({ "ModeChanged", "BufEnter", "FocusGained" }, {
+            vim.api.nvim_create_autocmd({ "InsertLeave", "BufEnter" }, {
                 pattern = "*.md",
                 callback = function()
                     vim.schedule(function()
