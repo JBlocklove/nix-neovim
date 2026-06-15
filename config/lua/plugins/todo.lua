@@ -9,17 +9,17 @@ return{
 	},
 	after = function()
 		require("todo-comments").setup({
-			keywords = {
-				CITE = {
-					icon = "",
-					color = "warning",
-					alt = { "needcite", "\\needcite" },
-				}
-			},
-			merge_keywords = true,
-			highlight = {
-				comments_only = false,
-			}
+			-- keywords = {
+			-- 	CITE = {
+			-- 		icon = "",
+			-- 		color = "warning",
+			-- 		alt = { "needcite", "\\needcite" },
+			-- 	}
+			-- },
+			-- merge_keywords = true,
+			-- highlight = {
+			-- 	comments_only = false,
+			-- }
 		})
 	end,
 }
