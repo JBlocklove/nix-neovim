@@ -1,21 +1,37 @@
+-- Oh boy getting word and letter counts to work for LaTeX is a pain
+-- Also, the latex word count only updates on write anyway
+vim.api.nvim_create_augroup("LualineVimtexCache", {clear = true})
+vim.api.nvim_create_autocmd({ "BufEnter", "BufWritePost" }, {
+	group = "LualineVimtexCache",
+	pattern = { "*.tex" },
+	callback = function()
+		if vim.fn.exists("*vimtex#misc#wordcount") == 1 then
+			vim.b.vimtex_words = vim.fn['vimtex#misc#wordcount']()
+			vim.b.vimtex_chars = vim.fn['vimtex#misc#wordcount']({ count_letters = true })
+		end
+	end,
+})
+
 local function get_wordcount()
-	local wordcount = 0
-	if vim.fn.mode():find("[vV]") then
-		wordcount = vim.fn.wordcount().visual_words
+	local ft = vim.bo.filetype
+	if (ft == "latex" or ft == "tex") then
+		return vim.b.vimtex_words or "..."
+	elseif vim.fn.mode():find("[vV]") then
+		return vim.fn.wordcount().visual_words
 	else
-		wordcount = vim.fn.wordcount().words
+		return vim.fn.wordcount().words
 	end
-	return wordcount
 end
 
 local function get_charcount()
-	local charcount = 0
-	if vim.fn.mode():find("[vV]") then
-		charcount = vim.fn.wordcount().visual_chars
+	local ft = vim.bo.filetype
+	if (ft == "latex" or ft == "tex") then
+		return vim.b.vimtex_chars or "..."
+	elseif vim.fn.mode():find("[vV]") then
+		return vim.fn.wordcount().visual_chars
 	else
-		charcount = vim.fn.wordcount().chars
+		return vim.fn.wordcount().chars
 	end
-	return charcount
 end
 
 local function wordcount()
@@ -27,9 +43,8 @@ local function charcount()
 end
 
 local function is_prose()
-	ft = vim.bo.filetype
-	-- TODO: Add latex with vimtex word count functions
-	return ft == "markdown" or ft == "text" or ft == "mail"
+	local ft = vim.bo.filetype
+	return ft == "markdown" or ft == "text" or ft == "mail" or ft == "latex" or ft == "tex"
 end
 
 
@@ -165,11 +180,8 @@ return {
 					{ wordcount, cond = is_prose },
 				},
 				lualine_z = {
-					{ " location" },
-					{
-						'progress',
-						-- color = { fg = palette.fg },
-					}
+					{ "location" },
+					{ "progress" },
 				}
 			},
 			inactive_sections = {
