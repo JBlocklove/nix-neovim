@@ -1,3 +1,38 @@
+local function get_wordcount()
+	local wordcount = 0
+	if vim.fn.mode():find("[vV]") then
+		wordcount = vim.fn.wordcount().visual_words
+	else
+		wordcount = vim.fn.wordcount().words
+	end
+	return wordcount
+end
+
+local function get_charcount()
+	local charcount = 0
+	if vim.fn.mode():find("[vV]") then
+		charcount = vim.fn.wordcount().visual_chars
+	else
+		charcount = vim.fn.wordcount().chars
+	end
+	return charcount
+end
+
+local function wordcount()
+	return "" .. " " .. get_wordcount()
+end
+
+local function charcount()
+	return "󰾹" .. " " .. get_charcount()
+end
+
+local function is_prose()
+	ft = vim.bo.filetype
+	-- TODO: Add latex with vimtex word count functions
+	return ft == "markdown" or ft == "text" or ft == "mail"
+end
+
+
 return {
 	"lualine.nvim",
 	for_cat = "ui",
@@ -125,8 +160,12 @@ return {
 						'filetype', icons_enabled=false
 					},
 				},
-				lualine_y = { 'location' },
+				lualine_y = {
+					{ charcount, cond = is_prose },
+					{ wordcount, cond = is_prose },
+				},
 				lualine_z = {
+					{ " location" },
 					{
 						'progress',
 						-- color = { fg = palette.fg },

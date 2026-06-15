@@ -8,7 +8,19 @@ return{
       {"<leader>ft", function() Snacks.picker.todo_comments() end, mode = {"n"}, desc = "[F]ind [T]odos", },
 	},
 	after = function()
-		require("todo-comments").setup{}
+		require("todo-comments").setup({
+			keywords = {
+				CITE = {
+					icon = "",
+					color = "warning",
+					alt = { "needcite", "\\needcite" },
+				}
+			},
+			merge_keywords = true,
+			highlight = {
+				comments_only = false,
+			}
+		})
 	end,
 }
 

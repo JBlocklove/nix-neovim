@@ -47,7 +47,7 @@ inputs: { config, wlib, lib, pkgs, ... }: {
         after = [ "lsp" ];
         lazy = true;
         data = null;
-        extraPackages = with pkgs; [
+        runtimePkgs = with pkgs; [
             nixd
             nixfmt
         ];
@@ -59,7 +59,7 @@ inputs: { config, wlib, lib, pkgs, ... }: {
         data = with pkgs.vimPlugins; [
             lazydev-nvim
         ];
-        extraPackages = with pkgs; [
+        runtimePkgs = with pkgs; [
             lua-language-server
             stylua
         ];
@@ -71,7 +71,7 @@ inputs: { config, wlib, lib, pkgs, ... }: {
         data = with pkgs.vimPlugins; [
             vimtex
         ];
-        extraPackages = with pkgs; [
+        runtimePkgs = with pkgs; [
             zathura
             pandoc
             texlab # contains the tex LSP
@@ -82,7 +82,7 @@ inputs: { config, wlib, lib, pkgs, ... }: {
         after = [ "lsp" ];
         lazy = true;
         data = null;
-        extraPackages = with pkgs; [
+        runtimePkgs = with pkgs; [
             pyright
         ];
     };
@@ -91,7 +91,7 @@ inputs: { config, wlib, lib, pkgs, ... }: {
         after = [ "lsp" ];
         lazy = false;
         data = null;
-        extraPackages = with pkgs; [
+        runtimePkgs = with pkgs; [
             verible
             sv-lang
             verilator
@@ -102,7 +102,7 @@ inputs: { config, wlib, lib, pkgs, ... }: {
         after = [ "lsp" ];
         lazy = false;
         data = null;
-        extraPackages = with pkgs; [
+        runtimePkgs = with pkgs; [
             vhdl-ls
         ];
     };
@@ -111,7 +111,7 @@ inputs: { config, wlib, lib, pkgs, ... }: {
         after = [ "lsp" ];
         lazy = false;
         data = null;
-        extraPackages = with pkgs; [
+        runtimePkgs = with pkgs; [
             bash-language-server
         ];
     };
@@ -140,7 +140,7 @@ inputs: { config, wlib, lib, pkgs, ... }: {
     config.specs.general = {
         after = [ "setup" ];
         lazy = true;
-        extraPackages = with pkgs; [
+        runtimePkgs = with pkgs; [
 			ripgrep
             tree-sitter
         ];
@@ -203,15 +203,15 @@ inputs: { config, wlib, lib, pkgs, ... }: {
 
 
     # This submodule modifies both levels of your specs
-    #   - Defines extraPackages for specs 
+    #   - Defines runtimePkgs for specs 
     config.specMods = { parentSpec ? null, parentOpts ? null, parentName ? null, config, ... }: {
-        options.extraPackages = lib.mkOption {
+        options.runtimePkgs = lib.mkOption {
             type = lib.types.listOf wlib.types.stringable;
             default = [ ];
-            description = "a extraPackages spec field to put packages to suffix to the PATH";
+            description = "a runtimePkgs spec field to put packages to suffix to the PATH";
         };
     };
-    config.extraPackages = config.specCollect (acc: v: acc ++ (v.extraPackages or [ ])) [ ];
+    config.runtimePkgs = config.specCollect (acc: v: acc ++ (v.runtimePkgs or [ ])) [ ];
 
     # Inform our lua of which top level specs are enabled
     # All enabled by default
