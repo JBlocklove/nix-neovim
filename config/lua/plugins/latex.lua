@@ -23,5 +23,9 @@ return {
 			[[Underfull \\vbox]], -- (optional) hide underfull vbox warnings too
 
 		}
+
+		vim.g.vimtex_compiler_latexmk_engines = {
+			['_'] = '-lualatex',
+		}
 	end,
 }
