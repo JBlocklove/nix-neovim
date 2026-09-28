@@ -34,8 +34,8 @@ return {
 					["<C-o>"] = { "select_and_accept", "fallback" },
 					["<C-s>"] = { function(cmp) cmp.show({ providers = { 'snippets' } }) end },
 
-					["<C-n>"] = {"snippet_forward", "fallback_to_mappings"},
-					["<C-p>"] = {"snippet_backward", "fallback_to_mappings"},
+					["<Tab>"] = { "snippet_forward", "fallback" },
+					["<S-Tab>"] = { "snippet_backward", "fallback" },
 
 					["<C-b>"] = { "scroll_documentation_up", "fallback" },
 					["<C-f>"] = { "scroll_documentation_down", "fallback" },
@@ -104,17 +104,9 @@ return {
 					},
 				},
 				snippets = {
+					-- The preset's default `active` is what we want. The old
+					-- override disabled jumping while the menu was visible.
 					preset = 'luasnip',
-					active = function(filter)
-						local snippet = require "luasnip"
-						local blink = require "blink.cmp"
-						if snippet.in_snippet() and not blink.is_visible() then
-							return true
-						else
-							if not snippet.in_snippet() and vim.fn.mode() == "n" then snippet.unlink_current() end
-							return false
-						end
-					end,
 				},
 				sources = {
 					default = { 'lsp', 'path', 'snippets', 'buffer', 'omni' },

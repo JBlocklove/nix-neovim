@@ -146,17 +146,11 @@ inputs: { config, wlib, lib, pkgs, ... }: {
         ];
         data = with pkgs.vimPlugins; [
             snacks-nvim
-            # nvim-surround
-            # vim-startuptime
-            # nvim-lint
-            # conform-nvim
-            nvim-treesitter.withAllGrammars # FIXME: nvim-treesitter is kinda no more?
+            nvim-treesitter.withAllGrammars
             nvim-treesitter-textobjects
 			nvim-treesitter-context
             # autoclose-nvim
             nvim-autopairs
-            indent-blankline-nvim
-            # eyeliner-nvim # UNFREE?
             trouble-nvim
             undotree
         ];

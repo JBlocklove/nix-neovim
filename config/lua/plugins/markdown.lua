@@ -20,8 +20,8 @@ return {
 		for_cat = "markdown",
 		ft = "markdown",
     	keys = {
-    	  {"<leader>mm", "<cmd>Markview toggle <CR>", mode = {"n"}, noremap = true, desc = "[M]arkview [M]Toggle"},
-    	  {"<leader>ms", "<cmd>Markview splitToggle<CR>", mode = {"n"}, noremap = true, desc = "[M]arkview Sp[L]it"},
+			{"<leader>mm", "<cmd>Markview toggle <CR>", mode = {"n"}, noremap = true, desc = "[M]arkview [M]Toggle"},
+			{"<leader>ml", "<cmd>Markview splitToggle<CR>", mode = {"n"}, noremap = true, desc = "[M]arkview Sp[L]it"},
     	},
 		lazy = true,
         after = function()

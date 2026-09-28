@@ -24,8 +24,7 @@ end
 
 require("options")
 require("mappings")
+require("autocmds")
 
 require("plugins")
 require("LSPs")
-
-require("colorscheme") -- FIXME: Shouldn't need this but it's necessary for markview?

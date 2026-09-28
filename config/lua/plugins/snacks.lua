@@ -11,11 +11,11 @@ return{
 		require("snacks").setup ({
             -- Telescope replacements
             explorer = {
-                enable = true,
+                enabled = true,
                 replace_netrw = true,
             },
             picker = {
-                enable = true,
+                enabled = true,
                 sources = {
                     explorer = {
                         auto_close = true,
@@ -25,7 +25,7 @@ return{
 
             -- Indentline guides
             indent = {
-                enable = true,
+                enabled = true,
                 -- scope = {
                 --     hl = "MySnacksIndent"
                 -- },
@@ -36,7 +36,7 @@ return{
 
             -- Status columns
             statuscolumn = {
-                enable = true,
+                enabled = true,
                 left = { "git" },
                 right = { "sign", "fold" },
                 folds = {
@@ -51,7 +51,7 @@ return{
 
             -- Notifications
             notifier = {
-                enable = true,
+                enabled = true,
             },
         })
 

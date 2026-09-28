@@ -53,16 +53,7 @@ nixInfo.lze.register_handlers {
 
 -- lze loading
 nixInfo.lze.load {
-    -- load colorscheme
-    {
-        "trigger_colorscheme",
-        event = "VimEnter",
-        load = function(_name)
-            vim.schedule(function()
-                vim.cmd.colorscheme(nixInfo("catppuccin-mocha", "settings", "colorscheme"))
-            end)
-        end
-    },
+	-- Load catppuccin colorscheme
     { import = "plugins.catppuccin" },
 
     -- Other UI
@@ -99,6 +90,7 @@ nixInfo.lze.load {
 	{ import = "plugins.autopair" },
 
 }
-vim.api.nvim_set_hl(0, "TreesitterContextBottom", { underline = false })
+
+vim.cmd.colorscheme(nixInfo("catppuccin-mocha", "settings", "colorscheme"))
 
 
