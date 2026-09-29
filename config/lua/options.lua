@@ -68,5 +68,6 @@ vim.o.winborder = "single"
 vim.filetype.add({
 	extension = {
 		zsh = "sh",
+		v = "verilog",
 	},
 })

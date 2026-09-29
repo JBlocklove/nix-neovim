@@ -1,7 +1,6 @@
 return {
 	{
 		"markdown-preview.nvim",
-        -- auto_enable = true,
     	for_cat = "markdown",
     	cmd = { "MarkdownPreview", "MarkdownPreviewStop", "MarkdownPreviewToggle", },
     	ft = "markdown",
@@ -16,7 +15,6 @@ return {
 	},
 	{
 		"markview.nvim",
-        -- auto_enable = true,
 		for_cat = "markdown",
 		ft = "markdown",
     	keys = {

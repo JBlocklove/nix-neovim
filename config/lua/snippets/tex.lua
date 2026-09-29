@@ -445,7 +445,6 @@ return{
 		}
 	)),
 
-	-- needs \usepackage{listings}
 	s("lst", fmt(
 		[[
 		\begin{{lstlisting}}[language={}, caption={{{}}}]
@@ -454,7 +453,7 @@ return{
 		{}
 		]],
 		{
-			i(1,"Python"), i(2,"Caption"), i(3), i(0)
+			i(1,"Verilog"), i(2,"Caption"), i(3), i(0)
 		}
 	)),
 

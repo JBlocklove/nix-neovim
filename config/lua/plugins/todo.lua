@@ -9,17 +9,25 @@ return{
 	},
 	after = function()
 		require("todo-comments").setup({
-			-- keywords = {
-			-- 	CITE = {
-			-- 		icon = "",
-			-- 		color = "warning",
-			-- 		alt = { "needcite", "\\needcite" },
-			-- 	}
-			-- },
-			-- merge_keywords = true,
-			-- highlight = {
-			-- 	comments_only = false,
-			-- }
+			-- Adds TODO flagging to my needcite command
+			keywords = {
+				CITE = {
+					icon = "",
+					color = "warning",
+					alt = { "needcite" },
+				}
+			},
+			merge_keywords = true,
+			highlight = {
+				comments_only = false,
+				pattern = {
+					[[.*<(KEYWORDS)\s*:]], -- %CITE:
+					[[\\(KEYWORDS)>]], -- \needcite
+				},
+			},
+			search = {
+				pattern = [[\b(KEYWORDS):|\\(KEYWORDS)\b]],
+			},
 		})
 	end,
 }

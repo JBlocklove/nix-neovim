@@ -17,10 +17,16 @@ return {
 
 		vim.g.vimtex_indent_enabled = 0
 
+		-- texlab provides completion
+		vim.g.vimtex_complete_enabled = 0
+
+		-- K is LSP hover (LSPs/attach.lua), can't use for docs
+		vim.g.vimtex_mappings_disable = { n = { "K" } }
+
 		vim.g.vimtex_quickfix_ignore_filters = {
 			[[Underfull \\hbox]], -- hide underfull hbox warnings
-			[[Overfull \\hbox]], -- (optional) hide overfull hbox warnings too
-			[[Underfull \\vbox]], -- (optional) hide underfull vbox warnings too
+			[[Overfull \\hbox]], -- hide overfull hbox warnings too
+			[[Underfull \\vbox]], -- hide underfull vbox warnings too
 
 		}
 
@@ -28,6 +34,13 @@ return {
 			aux_dir = "./aux",
 			out_dir = "./out",
 			continuous = 0,
+			options = {
+				"-verbose",
+				"-file-line-error",
+				"-synctex=1",
+				"-interaction=nonstopmode",
+				"-f",
+			}
 		}
 
 		vim.g.vimtex_compiler_latexmk_engines = {
@@ -37,6 +50,17 @@ return {
 
 	after = function()
 		local group = vim.api.nvim_create_augroup("vimtex_config", { clear = true })
+
+		-- texlab publishes diagnostics for every file in the project, and Neovim creates an unlisted buffer for each one it hasn't opened yet. Make sure those show up in the buffer list once actually visited.
+		vim.api.nvim_create_autocmd("BufEnter", {
+			group = group,
+			pattern = { "*.tex", "*.bib" },
+			callback = function()
+				if not vim.bo.buflisted then
+					vim.bo.buflisted = true
+				end
+			end,
+		})
 
 		local mains = {}
 		vim.api.nvim_create_autocmd("User", {
@@ -58,7 +82,7 @@ return {
 		local function compile(main)
 			local opts = vim.g.vimtex_compiler_latexmk or {}
 			local engine = (vim.g.vimtex_compiler_latexmk_engines or {})._ or "-pdf"
-			local cmd = { "latexmk", engine, "-interaction=nonstopmode", "-file-line-error", "-synctex=1" }
+			local cmd = { "latexmk", engine, "-interaction=nonstopmode", "-file-line-error", "-synctex=1", "-f" }
 			if opts.out_dir then
 				table.insert(cmd, "-outdir=" .. opts.out_dir)
 			end

@@ -15,7 +15,12 @@ return{
     		{ "<leader>f", group = "[f]ind (picker)" },
     		{ "<leader>s", group = "[s]nacks (extra picker finds)" },
     		{ "<leader>t", group = "[t]oggles" },
-    		{ "<leader>w", group = "[w]orkspace" },
+			-- LSP namespace (<Space>)
+			{ "<Space>g", group = "LSP [g]oto" },
+			{ "<Space>w", group = "LSP [w]orkspace" },
+			{ "<Space>c", group = "LSP [c]ode" },
+			{ "<Space>d", group = "LSP [d]ocument" },
+			{ "<Space>t", group = "LSP [t]oggles" },
 			{ "<leader>l", group = "[l]atex (VimTex)" },
     	}
     end,

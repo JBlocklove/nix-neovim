@@ -1,3 +1,5 @@
+-- Buffer-local setup lives in one LspAttach LSPs/attach.lua.
+require("LSPs.attach")
 
 -- NOTE: This config uses lzextras.lsp handler https://github.com/BirdeeHub/lzextras?tab=readme-ov-file#lsp-handler
 -- Because we have the paths, we can set a more performant fallback function
@@ -24,9 +26,13 @@ nixInfo.lze.load {
             vim.lsp.enable(plugin.name)
         end,
         before = function(_)
-            vim.lsp.config('*', {
-                on_attach = require('LSPs.on_attach'),
-            })
+            -- Defaults shared by every server. vim.lsp.config('*') merges under each server's own config
+            local base = {}
+            local ok, blink = pcall(require, "blink.cmp")
+            if ok then
+                base.capabilities = blink.get_lsp_capabilities()
+            end
+            vim.lsp.config("*", base)
         end,
     },
     {
@@ -44,10 +50,18 @@ nixInfo.lze.load {
         cmd = { "LazyDev" },
         ft = "lua",
         after = function(_)
+            -- Nix: point at the plugin's lua/ dir directly.
+            -- Non-nix: fall back to the plugin name, which lazydev resolves itself.
+            local function lib(name, words)
+                local path = nixInfo.get_nix_plugin_path(name)
+                return { path = path and (path .. "/lua") or name, words = words }
+            end
             require('lazydev').setup({
                 library = {
-                    { words = { "nixInfo%.lze" }, path = nixInfo("lze", "plugins", "start", "lze") .. '/lua', },
-                    { words = { "nixInfo%.lze" }, path = nixInfo("lzextras", "plugins", "start", "lzextras") .. '/lua' },
+                    lib("lze", { "nixInfo%.lze" }),
+                    lib("lzextras", { "nixInfo%.lze" }),
+                    -- types for the global Snacks object used in keymaps
+                    lib("snacks.nvim", { "Snacks" }),
                 },
             })
         end,
@@ -56,50 +70,49 @@ nixInfo.lze.load {
         "lua_ls",
         for_cat = "lua",
         lsp = {
-            -- if you provide the filetypes it doesn't ask lspconfig for the filetypes
-            filetypes = { 'lua' },
             settings = {
                 Lua = {
                     runtime = { version = 'LuaJIT' },
-                    formatters = {
-                        ignoreComments = true,
-                    },
-                    signatureHelp = {
-                        enabled = true
-                    },
+                    hint = { enable = true },
                     diagnostics = {
                         globals = { "nixInfo", "vim", },
                         disable = { 'missing-fields' },
                     },
-                    telemetry = { enabled = false },
                 },
             },
         },
     },
-    -- TeXLab - LaTeX LSP
+
+	-- LaTeX LSP, works with vimtex
     {
         "texlab",
         for_cat = "latex",
         lsp = {
             filetypes = { "tex", "bib" },
-            on_attach = function(_)
-                local group = vim.api.nvim_create_augroup("texlabunlistfix", { clear = true })
-                vim.api.nvim_create_autocmd("BufEnter", {
-                    group = group,
-                    pattern = "*.tex",
-                    callback = function()
-                        if not vim.bo.buflisted then
-                            vim.bo.buflisted = true
-                        end
-                    end,
-                })
+
+			-- Reads vimtex latexmk configs to find necessary aux and out directories
+            before_init = function(_, config)
+                local latexmk = vim.g.vimtex_compiler_latexmk or {}
+                local engine = (vim.g.vimtex_compiler_latexmk_engines or {})._ or "-pdf"
+                local aux = latexmk.aux_dir or "."
+                local out = latexmk.out_dir or "."
+
+                local texlab = config.settings.texlab
+                texlab.build.auxDirectory = aux
+                texlab.build.logDirectory = aux
+                texlab.build.pdfDirectory = out
+                texlab.build.args = {
+                    engine, "-interaction=nonstopmode", "-file-line-error", "-synctex=1",
+                    "-auxdir=" .. aux, "-outdir=" .. out, "%f",
+                }
+                texlab.diagnostics = {
+                    ignoredPatterns = vim.g.vimtex_quickfix_ignore_filters or {},
+                }
             end,
             settings = {
                 texlab = {
-                    auxDirectory = ".",
                     bibtexFormatter = "texlab",
                     build = {
-                        args = { "-pdf", "-interaction=nonstopmode", "-synctex=1", "%f" },
                         executable = "latexmk",
                         forwardSearchAfter = false,
                         onSave = false,
@@ -110,9 +123,6 @@ nixInfo.lze.load {
                     },
                     diagnosticsDelay = 300,
                     formatterLineLength = 80,
-                    forwardSearch = {
-                        args = {},
-                    },
                     latexFormatter = "latexindent",
                     latexindent = {
                         modifyLineBreaks = false
@@ -121,35 +131,31 @@ nixInfo.lze.load {
             },
         },
     },
+
     {
-        "rnix",
-        -- mason doesn't have nixd
-        enabled = not nixInfo.isNix,
-        lsp = {
-            filetypes = { "nix" },
-        },
-    },
-    {
+        -- non-nix fallback only
         "nil_ls",
-        -- mason doesn't have nixd
         enabled = not nixInfo.isNix,
-        lsp = {
-            filetypes = { "nix" },
-        },
+        lsp = {},
     },
+
     {
         "nixd",
         for_cat = "nix",
         enabled = nixInfo.isNix,
         lsp = {
-            filetypes = { "nix" },
             settings = {
                 nixd = {
                     nixpkgs = {
-                        expr = [[import <nixpkgs> {}]],
+                        -- The exact nixpkgs this neovim was built from so completions work without a NIX_PATH channel.
+                        expr = ("import %s {}"):format(nixInfo("<nixpkgs>", "settings", "nixpkgs_path")),
                     },
-                    options = {
-                    },
+					-- TODO: Figure out how to get the system info proframmatically
+                    -- Option completion for the system config, e.g.:
+                    -- options = {
+                    --     nixos = { expr = [[(builtins.getFlake "/path/to/flake").nixosConfigurations.HOST.options]] },
+                    --     home_manager = { expr = [[(builtins.getFlake "/path/to/flake").homeConfigurations.USER.options]] },
+                    -- },
                     formatting = {
                         command = { "nixfmt" }
                     },
@@ -162,11 +168,21 @@ nixInfo.lze.load {
             },
         },
     },
+
     {
         "pyright",
         for_cat = "python",
+        lsp = {},
+    },
+
+	-- HDL LSP configs
+    {
+        "slang_server",
+        for_cat = "verilog",
         lsp = {
-            filetypes = { "python" },
+            cmd = { "slang-server" },
+            filetypes = { "verilog", "systemverilog" },
+            root_markers = { ".slang", ".git" },
         },
     },
     {
@@ -174,44 +190,55 @@ nixInfo.lze.load {
         for_cat = "verilog",
         lsp = {
             filetypes = { "verilog", "systemverilog" },
-            cmd = { "verible-verilog-ls", "--rules_config_search" },
-        },
-    },
-    {
-        "svlangserver",
-        for_cat = "verilog",
-        lsp = {
-            filetypes = { "systemverilog" },
-            settings = {
-                systemverilog = {
-                    includeIndexing = { "**/*.{sv,svh}" },
-                    linter = "verilator",
-                    launchConfiguration =  "verilator --sv --lint-only --Wall",
-                },
+            cmd = {
+                "verible-verilog-ls",
+                "--rules_config_search",
+                "--indentation_spaces=4",
             },
+            on_init = function(client)
+                local caps = client.server_capabilities
+                if not caps then return end
+                caps.hoverProvider = false
+                caps.definitionProvider = false
+                caps.referencesProvider = false
+                caps.renameProvider = false
+                caps.documentSymbolProvider = false
+                caps.workspaceSymbolProvider = false
+                caps.documentHighlightProvider = false
+                caps.completionProvider = nil
+            end,
         },
     },
+
     {
         "vhdl_ls",
         for_cat = "vhdl",
         lsp = {
             filetypes = { "vhdl" },
-            settings = {},
+            root_markers = { "vhdl_ls.toml", ".git" },
         },
     },
     {
         "bashls",
         for_cat = "bash",
         lsp = {
-            filetypes = { "sh" },
+            root_dir = function(bufnr, on_dir)
+                local fname = vim.api.nvim_buf_get_name(bufnr)
+                if fname:match("%.zsh$") then
+                    return
+                end
+                on_dir(vim.fs.root(bufnr, { ".git" }) or vim.fs.dirname(fname))
+            end,
         },
     },
 }
 
 vim.diagnostic.config {
+    severity_sort = true,
     float = {
-        border = "single",
+        source = "if_many",
     },
+    virtual_lines = false,
     virtual_text = {
         severity = { min = vim.diagnostic.severity.ERROR }
     },
@@ -230,16 +257,3 @@ vim.diagnostic.config {
         }
     }
 }
-
-vim.api.nvim_create_autocmd('LspAttach', {
-    group = vim.api.nvim_create_augroup('kickstart-lsp-attach', { clear = true }),
-    callback = function (event)
-        require("LSPs.on_attach")(nil, event.buf)
-    end,
-})
-
--- Override hover mapping to add border
-vim.keymap.set("n", "K", function() vim.lsp.buf.hover { border = "single" } end, { desc = "Hover Documentation" })
--- Override signature help mapping to add border
-vim.keymap.set({ "n", "i" }, "<C-k>", function() vim.lsp.buf.signature_help({border = "single"}) end, { desc = "Signature Help"})
-

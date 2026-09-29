@@ -24,12 +24,14 @@ return {
 		"blink.cmp",
 		for_cat = "completion",
 		event = "DeferredUIEnter",
+		-- load before nvim-lspconfig so every server gets blink's capabilities
+		dep_of = { "nvim-lspconfig" },
 		after = function (_)
 			require("blink.cmp").setup({
 				keymap =  {
 					preset = 'none',
 					["<C-j>"] = { "select_next", "fallback_to_mappings" },
-					["<C-k>"] = { "select_prev", "fallback_to_mappings" },
+					["<C-k>"] = { "select_prev", "show_signature", "fallback_to_mappings" },
 
 					["<C-o>"] = { "select_and_accept", "fallback" },
 					["<C-s>"] = { function(cmp) cmp.show({ providers = { 'snippets' } }) end },
@@ -104,13 +106,21 @@ return {
 					},
 				},
 				snippets = {
-					-- The preset's default `active` is what we want. The old
-					-- override disabled jumping while the menu was visible.
 					preset = 'luasnip',
 				},
 				sources = {
 					default = { 'lsp', 'path', 'snippets', 'buffer', 'omni' },
+					per_filetype = {
+						lua = { inherit_defaults = true, 'lazydev' },
+					},
 					providers = {
+						-- require() path and plugin module completion from lazydev
+						lazydev = {
+							name = 'LazyDev',
+							module = 'lazydev.integrations.blink',
+							score_offset = 100,
+							enabled = function() return nixInfo(true, "settings", "cats", "lua") end,
+						},
 						path = {
 							score_offset = 50,
 						},

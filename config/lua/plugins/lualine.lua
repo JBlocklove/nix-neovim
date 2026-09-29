@@ -155,19 +155,8 @@ return {
 					},
 					{
 						function()
-							local msg = 'No Active Lsp'
-							local buf_ft = vim.api.nvim_buf_get_option(0, 'filetype')
-							local clients = vim.lsp.get_clients()
-							if next(clients) == nil then
-								return msg
-							end
-							for _, client in ipairs(clients) do
-								local filetypes = client.config.filetypes
-								if filetypes and vim.fn.index(filetypes, buf_ft) ~= -1 then
-									return client.name
-								end
-							end
-							return msg
+							local names = vim.tbl_map(function(c) return c.name end, vim.lsp.get_clients({ bufnr = 0 }))
+							return #names > 0 and table.concat(names, ", ") or "No Active Lsp"
 						end,
 						color = { fg = palette.text, gui = 'bold' },
 					},
@@ -197,12 +186,7 @@ return {
 			winbar = {
 				lualine_a = {},
 				lualine_b = {},
-				lualine_c = {
-					{
-						--navic.get_location,
-						--cond = navic.is_available,
-					},
-				},
+				lualine_c = {},
 				lualine_x = {},
 				lualine_y = {},
 				lualine_z = {},

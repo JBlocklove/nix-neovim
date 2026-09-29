@@ -52,10 +52,15 @@ inputs: { config, wlib, lib, pkgs, ... }: {
             nixfmt
         ];
     };
+    # Handed to lua via nixInfo so nixd evaluates the same nixpkgs this wrapper uses
+    options.settings.nixpkgs_path = lib.mkOption {
+        type = lib.types.str;
+        default = "${pkgs.path}";
+    };
 
     config.specs.lua = {
         after = [ "lsp" ];
-        lazy = false;
+        lazy = true;
         data = with pkgs.vimPlugins; [
             lazydev-nvim
         ];
@@ -92,9 +97,8 @@ inputs: { config, wlib, lib, pkgs, ... }: {
         lazy = false;
         data = null;
         runtimePkgs = with pkgs; [
-            verible
-            sv-lang
-            verilator
+			slang-server
+			verible
         ];
     };
 
@@ -113,6 +117,8 @@ inputs: { config, wlib, lib, pkgs, ... }: {
         data = null;
         runtimePkgs = with pkgs; [
             bash-language-server
+            shellcheck # bash-language-server diagnostics
+            shfmt      # bash-language-server formatting
         ];
     };
 
@@ -132,7 +138,7 @@ inputs: { config, wlib, lib, pkgs, ... }: {
         data = with pkgs.vimPlugins; [
 		    plenary-nvim
 			nvim-web-devicons
-            vim-tmux-navigator # FIXME: can't navigate in error windows...tmux interaction issue, potentially fixable?
+            vim-tmux-navigator
         ];
     };
 
@@ -182,7 +188,7 @@ inputs: { config, wlib, lib, pkgs, ... }: {
         ];
     };
 
-    # TODO: Does this need to be its own spec? Nope, moving to snacks probably
+    # TODO: Does this need to be its own spec? Probably moving to snacks...
     config.specs.telescope = {
         after = [ "general" ];
         lazy = true;
@@ -195,9 +201,6 @@ inputs: { config, wlib, lib, pkgs, ... }: {
 
     };
 
-
-    # This submodule modifies both levels of your specs
-    #   - Defines runtimePkgs for specs 
     config.specMods = { parentSpec ? null, parentOpts ? null, parentName ? null, config, ... }: {
         options.runtimePkgs = lib.mkOption {
             type = lib.types.listOf wlib.types.stringable;
@@ -207,7 +210,7 @@ inputs: { config, wlib, lib, pkgs, ... }: {
     };
     config.runtimePkgs = config.specCollect (acc: v: acc ++ (v.runtimePkgs or [ ])) [ ];
 
-    # Inform our lua of which top level specs are enabled
+    # Inform lua of which top level specs are enabled
     # All enabled by default
     options.settings.cats = lib.mkOption {
         readOnly = true;
