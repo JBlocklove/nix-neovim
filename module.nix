@@ -8,7 +8,7 @@ inputs: { config, wlib, lib, pkgs, ... }: {
     };
 
     config.settings.config_directory = ./config;
-    
+
     # Handle colorschemes nicely (only install colorschemes that are actually in use)
     options.settings.colorscheme = lib.mkOption {
         type = lib.types.str;
@@ -127,7 +127,7 @@ inputs: { config, wlib, lib, pkgs, ... }: {
         lazy = true;
         data = with pkgs.vimPlugins; [
             markdown-preview-nvim
-            markview-nvim 
+            markview-nvim
         ];
     };
 
@@ -149,6 +149,7 @@ inputs: { config, wlib, lib, pkgs, ... }: {
         runtimePkgs = with pkgs; [
 			ripgrep
             tree-sitter
+            fd
         ];
         data = with pkgs.vimPlugins; [
             snacks-nvim
