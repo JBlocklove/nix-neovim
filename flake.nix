@@ -18,6 +18,11 @@
 			url = "github:BirdeeHub/lzextras";
 			flake = false;
 		};
+
+        plugins-lucid-colorscheme = {
+            url = "github:JBlocklove/lucid-colorscheme";
+            flake = false;
+        };
 	};
 	outputs = { self, nixpkgs, wrappers, ... }@inputs:
 	let
